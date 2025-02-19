@@ -1,6 +1,9 @@
 name: Terraform apply
 description: Apply pre defined plan
 inputs:
+  id:
+    description: 'Used to identify the artifact id to allow multiple terraform steps in the script'
+    required: true
   chdir:
     description: 'Which folder is located the terraform files'
     required: true
@@ -17,7 +20,7 @@ runs:
       id: download-terraform-plan
       uses: actions/download-artifact@v4
       with:
-        name: ${{ github.event.number }}-tf-plan
+        name: ${{ github.event.number }}-${{ inputs.id }}-tf-plan
         path: ${{ inputs.chdir }}
 
     - name: Terraform init

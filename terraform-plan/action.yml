@@ -1,6 +1,9 @@
 name: Terraform plan
 description: Check for format style and plan terraform
 inputs:
+  id:
+    description: 'Used to identify the artifact id to allow multiple terraform steps in the script'
+    required: true
   chdir:
     description: 'Which folder is located the terraform files'
     required: true
@@ -36,7 +39,7 @@ runs:
       id: save-artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ github.event.number }}-tf-plan
+        name: ${{ github.event.number }}-${{ inputs.id }}-tf-plan
         path: ${{ inputs.chdir }}/tfplan
 
     - uses: actions/github-script@v7
