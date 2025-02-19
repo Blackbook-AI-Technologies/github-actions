@@ -10,6 +10,9 @@ inputs:
   github-token:
     description: 'Github token obtain from secrets.GITHUB_TOKEN'
     required: true
+  workspace:
+    description: 'Terraform workspace (optional)'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -26,14 +29,19 @@ runs:
       shell: bash
       run: terraform -chdir=${{ inputs.chdir }} init
 
+    - name: Select or create workspace
+      shell: bash
+      if: ${{ inputs.workspace }}
+      run: terraform -chdir=${{ inputs.chdir }} workspace select -or-create ${{ inputs.workspace }}
+
     - name: Terraform plan
       id: plan
       shell: bash
       env:
         TF_VAR_github_token: ${{ inputs.github-token }}
         TF_VAR_github_actor: ${{ github.actor }}
-      run: |
-        terraform -chdir=${{ inputs.chdir }} plan -no-color -out=tfplan
+        TF_WORKSPACE: ${{ inputs.workspace }}
+      run: terraform -chdir=${{ inputs.chdir }} plan -no-color -out=tfplan
 
     - name: Save Terraform plan
       id: save-artifact
