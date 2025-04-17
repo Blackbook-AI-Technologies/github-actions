@@ -13,6 +13,9 @@ inputs:
   workspace:
     description: 'Terraform workspace (optional)'
     required: false
+  should_comment:
+    description: 'Should we add comment to the PR informing the plan?'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -51,7 +54,7 @@ runs:
         path: ${{ inputs.chdir }}/tfplan
 
     - uses: actions/github-script@v7
-      if: github.event_name == 'pull_request'
+      if: ${{ inputs.should_comment == 'true' && github.event_name == 'pull_request' }}
       with:
         github-token: ${{ inputs.github-token }}
         script: |
