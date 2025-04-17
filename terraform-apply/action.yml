@@ -13,6 +13,9 @@ inputs:
   workspace:
     description: 'Terraform workspace (optional)'
     required: false
+  should_comment:
+    description: 'Should we add comment to the PR informing the apply?'
+    required: false
 runs:
   using: "composite"
   steps:
@@ -44,7 +47,7 @@ runs:
       run: terraform -chdir=${{ inputs.chdir }} apply -no-color tfplan
 
     - uses: actions/github-script@v7
-      if: github.event_name == 'pull_request'
+      if: ${{ inputs.should_comment == 'true' && github.event_name == 'pull_request' }}
       with:
         github-token: ${{ inputs.github-token }}
         script: |
